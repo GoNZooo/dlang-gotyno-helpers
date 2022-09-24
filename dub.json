@@ -1,0 +1,13 @@
+{
+	"authors": [
+		"Rickard Andersson"
+	],
+	"copyright": "Copyright © 2022, Rickard Andersson",
+	"dependencies": {
+		"asdf": "~>0.7.15",
+		"fluent-asserts": "~>0.13.3"
+	},
+	"description": "Helpers for `gotyno-hs` to use for DLang output",
+	"license": "MIT",
+	"name": "gotyno-helpers"
+}

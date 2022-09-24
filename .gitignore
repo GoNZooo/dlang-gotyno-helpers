@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/gotyno-helpers
+gotyno-helpers.so
+gotyno-helpers.dylib
+gotyno-helpers.dll
+gotyno-helpers.a
+gotyno-helpers.lib
+gotyno-helpers-test-*
+*.exe
+*.o
+*.obj
+*.lst
