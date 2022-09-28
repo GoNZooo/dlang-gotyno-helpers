@@ -6,37 +6,36 @@ import structs;
 
 struct GenericUnion(T)
 {
-  alias Type = SumType!(JustHasInt, GenericType!T);
+  alias Type = SumType!(JustHasInt, GenericType!T, EmptyPayload);
   Type data;
   alias data this;
-
-  enum Tag
-  {
-    JustHasInt = "JustHasInt",
-    GenericType = "GenericType"
-  }
 
   static foreach (T; Type.Types)
     this(T v) @safe pure nothrow @nogc { data = v; }
 
   SerdeException deserializeFromAsdf(Asdf asdfData)
   {
-    Tag tag;
+    string tag;
     if (auto e = asdfData["type"].deserializeValue(tag)) return e;
 
     final switch (tag)
     {
-      case Tag.JustHasInt: {
-        auto v = JustHasInt(0);
+      case "JustHasInt": {
+        JustHasInt v = void;
         if (auto e = asdfData["data"].deserializeValue(v)) return e;
         data = v;
         return null;
       }
 
-      case Tag.GenericType: {
+      case "GenericType": {
         GenericType!T v = void;
         if (auto e = asdfData["data"].deserializeValue(v)) return e;
         data = v;
+        return null;
+      }
+
+      case "EmptyPayload": {
+        data = EmptyPayload();
         return null;
       }
     }
@@ -57,7 +56,8 @@ unittest
 
   decoded2.match!(
     (JustHasInt v) => v.otherValue.should.equal(1337),
-    (GenericType!int _) => assert(false)
+    (GenericType!int _) => assert(false),
+    EmptyPayload => assert(false)
   );
 }
 

@@ -13,6 +13,10 @@ struct GenericType(T)
   T value;
 }
 
+struct EmptyPayload
+{
+}
+
 unittest
 {
   auto s = `{"value": 42}`;
