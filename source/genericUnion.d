@@ -3,6 +3,8 @@ import asdf;
 import fluent.asserts : should;
 import std.sumtype;
 import structs;
+import std.meta;
+import std.algorithm : splitter;
 
 struct JustHasIntData
 {
@@ -22,6 +24,8 @@ struct OtherEmptyPayloadData
 {
 }
 
+private alias takeBaseTypeName(alias t) = Alias!(t.stringof.splitter('!').front());
+
 struct GenericUnion(T)
 {
   alias Type = SumType!(JustHasIntData, GenericTypeData!T, EmptyPayloadData, OtherEmptyPayloadData);
@@ -30,6 +34,8 @@ struct GenericUnion(T)
 
   static foreach (T; Type.Types)
     this(T v) @safe pure nothrow @nogc { data = v; }
+
+  static string[] Tags = [staticMap!(takeBaseTypeName, AliasSeq!(Type.Types))];
 
   SerdeException deserializeFromAsdf(Asdf asdfData)
   {
@@ -68,6 +74,7 @@ struct GenericUnion(T)
 unittest
 {
   GenericUnion!int.Type expected = GenericTypeData!int(GenericType!int(42));
+  writeln(GenericUnion!int.Tags);
   auto string = `{"type": "GenericType", "data": {"value": 42}}`;
   auto decoded = string.deserialize!(GenericUnion!int);
   decoded.data.should.equal(expected);
